@@ -1,0 +1,7 @@
+{
+  "name": "Copy of new omni",
+  "description": "A modern, dark-themed mobile ticketing and team management dashboard with analytics, user management, and detailed ticket tracking.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
