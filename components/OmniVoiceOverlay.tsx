@@ -235,7 +235,7 @@ const OmniVoiceOverlay: React.FC<OmniVoiceOverlayProps> = ({ isOpen, onClose, ti
         mediaStreamRef.current = stream;
         const systemInstruction = `You are Omnibot. Respond in ${language === 'ar' ? 'Arabic' : 'English'}. Handle tickets correctly.`;
         const sessionPromise = aiRef.current.live.connect({
-            model: 'gemini-2.5-flash-native-audio-preview-09-2025',
+            model: 'gemini-2.5-flash-native-audio-preview-12-2025',
             config: { responseModalities: [Modality.AUDIO], tools: tools, systemInstruction: systemInstruction },
             callbacks: {
                 onopen: () => {
