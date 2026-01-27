@@ -1,4 +1,3 @@
-
 import React, { useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -140,13 +139,13 @@ const Analytics: React.FC = () => {
           <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full overflow-visible">
               <defs>
                 <linearGradient id="gradient" x1="0" x2="0" y1="0" y2="1">
-                    <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.3" />
-                    <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
+                    <stop offset="0%" stopColor="#22c55e" stopOpacity="0.3" />
+                    <stop offset="100%" stopColor="#22c55e" stopOpacity="0" />
                 </linearGradient>
               </defs>
               <polyline 
                 fill="none" 
-                stroke="#3b82f6" 
+                stroke="#22c55e" 
                 strokeWidth="4" 
                 points={points} 
                 strokeLinecap="round" 
@@ -157,7 +156,7 @@ const Analytics: React.FC = () => {
                 fill="url(#gradient)" 
               />
               {values.map((val, i) => (
-                  <circle key={i} cx={i * step} cy={Number(height) - ((Number(val) / Number(max)) * Number(height) * 0.8) - 10} r="4" fill="#3b82f6" className="hover:r-6 transition-all" />
+                  <circle key={i} cx={i * step} cy={Number(height) - ((Number(val) / Number(max)) * Number(height) * 0.8) - 10} r="4" fill="#22c55e" className="hover:r-6 transition-all" />
               ))}
           </svg>
       );
@@ -190,7 +189,7 @@ const Analytics: React.FC = () => {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
             <div className="bg-white dark:bg-surface-dark p-5 rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm">
                 <div className="flex items-center gap-3 mb-2">
-                    <div className="size-10 rounded-full bg-blue-50 dark:bg-blue-500/10 text-blue-500 flex items-center justify-center">
+                    <div className="size-10 rounded-full bg-green-50 dark:bg-green-500/10 text-green-500 flex items-center justify-center">
                         <span className="material-symbols-outlined">confirmation_number</span>
                     </div>
                     <span className="text-sm font-bold text-slate-500 dark:text-slate-400">Total Volume</span>
@@ -223,7 +222,7 @@ const Analytics: React.FC = () => {
 
             <div className="bg-white dark:bg-surface-dark p-5 rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm">
                 <div className="flex items-center gap-3 mb-2">
-                    <div className="size-10 rounded-full bg-purple-50 dark:bg-purple-500/10 text-purple-500 flex items-center justify-center">
+                    <div className="size-10 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
                         <span className="material-symbols-outlined">schedule</span>
                     </div>
                     <span className="text-sm font-bold text-slate-500 dark:text-slate-400">Avg Time</span>
@@ -258,7 +257,7 @@ const Analytics: React.FC = () => {
                         const percent = Math.round((Number(count) / Number(stats.total)) * 100) || 0;
                         let color = 'bg-slate-400';
                         if(status === 'Open') color = 'bg-green-500';
-                        if(status === 'In Progress') color = 'bg-blue-500';
+                        if(status === 'In Progress') color = 'bg-emerald-500';
                         if(status === 'Pending') color = 'bg-orange-500';
                         if(status === 'Closed' || status === 'Resolved') color = 'bg-slate-600';
 

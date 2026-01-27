@@ -6,6 +6,27 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { DEFAULT_TICKET_TYPES } from '../data/mockData';
 
+// Manual base64 encoding as required by @google/genai guidelines
+function encodeBase64(bytes: Uint8Array): string {
+  let binary = '';
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
+// Manual base64 decoding as required by @google/genai guidelines
+function decodeBase64(base64: string): Uint8Array {
+  const binaryString = atob(base64);
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes;
+}
+
 interface TicketContextData {
   id: string;
   title: string;
@@ -135,7 +156,7 @@ const OmniVoiceOverlay: React.FC<OmniVoiceOverlayProps> = ({ isOpen, onClose, ti
       if (aiRef.current && allowedTypes.length > 0) {
           const typeNames = allowedTypes.map(t => t.name).join(', ');
           chatSessionRef.current = aiRef.current.chats.create({
-              model: 'gemini-3-pro-preview',
+              model: 'gemini-3-flash-preview',
               config: {
                   systemInstruction: `You are Omnibot, a helpful AI assistant for the OmniTicket app.
                   CURRENT LANGUAGE: ${language === 'ar' ? 'ARABIC (Please respond in Arabic)' : 'ENGLISH'}.
@@ -247,8 +268,8 @@ const OmniVoiceOverlay: React.FC<OmniVoiceOverlayProps> = ({ isOpen, onClose, ti
                         for (let i = 0; i < inputData.length; i++) sum += inputData[i] * inputData[i];
                         setVolumeLevel(Math.sqrt(sum / inputData.length) * 10);
                         const pcmData = new Int16Array(inputData.length);
-                        for (let i = 0; i < inputData.length; i++) pcmData[i] = Math.max(-1, Math.min(1, inputData[i])) * 32767;
-                        const base64 = btoa(String.fromCharCode(...new Uint8Array(pcmData.buffer)));
+                        for (let i = 0; i < inputData.length; i++) pcmData[i] = Math.max(-1, Math.min(1, inputData[i])) * 32768;
+                        const base64 = encodeBase64(new Uint8Array(pcmData.buffer));
                         sessionPromise.then(session => session.sendRealtimeInput({ media: { mimeType: "audio/pcm;rate=16000", data: base64 } }));
                     };
                     source.connect(processor);
@@ -278,9 +299,7 @@ const OmniVoiceOverlay: React.FC<OmniVoiceOverlayProps> = ({ isOpen, onClose, ti
   };
 
   const decodeAudioData = async (base64: string, ctx: AudioContext) => {
-      const binaryString = atob(base64);
-      const bytes = new Uint8Array(binaryString.length);
-      for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
+      const bytes = decodeBase64(base64);
       const int16 = new Int16Array(bytes.buffer);
       const float32 = new Float32Array(int16.length);
       for (let i = 0; i < int16.length; i++) float32[i] = int16[i] / 32768.0;

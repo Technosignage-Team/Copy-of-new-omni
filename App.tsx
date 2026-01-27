@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { HashRouter as Router, Routes, Route, Outlet, useLocation, Navigate } from 'react-router-dom';
+// Fixed react-router-dom imports by removing aliases and ensuring standard v6 members are used
+import { HashRouter, Routes, Route, Outlet, useLocation, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { VoiceProvider, useVoice } from './context/VoiceContext';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
@@ -70,7 +71,7 @@ const AppLayout = () => {
 
       <button 
         onClick={openVoice}
-        className={`fixed z-40 bg-white dark:bg-background-dark border-2 border-primary text-primary rounded-full shadow-[0_0_20px_rgba(59,130,246,0.4)] flex items-center justify-center hover:scale-110 hover:shadow-primary/60 transition-all active:scale-95 group bottom-24 md:bottom-8 w-14 h-14 md:w-16 md:h-16 ${isRTL ? 'left-5 md:left-8' : 'right-5 md:right-8'}`}
+        className={`fixed z-40 bg-white dark:bg-background-dark border-2 border-primary text-primary rounded-full shadow-[0_0_20px_rgba(34,197,94,0.4)] flex items-center justify-center hover:scale-110 hover:shadow-primary/60 transition-all active:scale-95 group bottom-24 md:bottom-8 w-14 h-14 md:w-16 md:h-16 ${isRTL ? 'left-5 md:left-8' : 'right-5 md:right-8'}`}
       >
         <span className="material-symbols-outlined text-[28px] md:text-[32px] group-hover:animate-pulse">graphic_eq</span>
         <span className={`absolute -top-1 flex h-3 w-3 ${isRTL ? '-left-1' : '-right-1'}`}>
@@ -94,7 +95,7 @@ const App: React.FC = () => {
       <AuthProvider>
         <VoiceProvider>
           <ToastProvider>
-              <Router>
+              <HashRouter>
                   <Routes>
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
@@ -133,7 +134,7 @@ const App: React.FC = () => {
                   </Route>
                   <Route path="*" element={<Navigate to="/login" replace />} />
                   </Routes>
-              </Router>
+              </HashRouter>
           </ToastProvider>
         </VoiceProvider>
       </AuthProvider>

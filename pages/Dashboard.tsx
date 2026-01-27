@@ -1,12 +1,13 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { supabase } from '../lib/supabase';
+import { useToast } from '../context/ToastContext';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { showToast } = useToast();
   const [stats, setStats] = useState({
       total: 0,
       open: 0,
@@ -14,6 +15,8 @@ const Dashboard: React.FC = () => {
       closed: 0
   });
   const [loading, setLoading] = useState(true);
+  const [edgeLoading, setEdgeLoading] = useState(false);
+  const [edgeResult, setEdgeResult] = useState<string | null>(null);
   const [escalationCount, setEscalationCount] = useState(0);
   const [recentUpdates, setRecentUpdates] = useState<any[]>([]);
 
@@ -44,9 +47,28 @@ const Dashboard: React.FC = () => {
       }
   };
 
+  const callEdgeFunction = async () => {
+      setEdgeLoading(true);
+      setEdgeResult(null);
+      try {
+          // 'hello-omni' is the name of your deployed Edge Function
+          const { data, error } = await supabase.functions.invoke('hello-omni', {
+              body: { name: 'Omni Agent' }
+          });
+
+          if (error) throw error;
+          setEdgeResult(data.message);
+          showToast("Edge Function Success!");
+      } catch (e: any) {
+          console.error("Edge function failed", e);
+          showToast("Edge Function not deployed or unreachable", "error");
+          setEdgeResult("Error: Ensure you have deployed the 'hello-omni' function via Supabase CLI.");
+      } finally {
+          setEdgeLoading(false);
+      }
+  };
+
   const checkEscalations = async () => {
-      // Real implementation would likely be a database function or edge function,
-      // but for "making it real" now, we check on load
       try {
           const { data: tickets } = await supabase.from('tickets').select('*');
           const { data: users } = await supabase.from('profiles').select('*');
@@ -111,14 +133,40 @@ const Dashboard: React.FC = () => {
                 <h2 className="text-2xl font-bold leading-tight text-slate-900 dark:text-white">{t('welcome_agent')}</h2>
                 <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{t('happening_today')}</p>
             </div>
-            <button 
-                onClick={() => navigate('/tickets/new')}
-                className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg shadow-primary/20 hover:shadow-primary/40 active:scale-95 w-full md:w-auto"
-            >
-                <span className="material-symbols-outlined text-[20px]">add_circle</span>
-                <span>{t('create_new_ticket')}</span>
-            </button>
+            <div className="flex gap-2">
+                <button 
+                    onClick={callEdgeFunction}
+                    disabled={edgeLoading}
+                    className="flex items-center justify-center gap-2 bg-white dark:bg-surface-dark text-slate-700 dark:text-white border border-slate-200 dark:border-white/10 px-6 py-3 rounded-2xl font-bold transition-all shadow-sm active:scale-95 disabled:opacity-50"
+                >
+                    {edgeLoading ? (
+                        <span className="size-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></span>
+                    ) : (
+                        <span className="material-symbols-outlined text-[20px]">bolt</span>
+                    )}
+                    <span>Test Edge</span>
+                </button>
+                <button 
+                    onClick={() => navigate('/tickets/new')}
+                    className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg shadow-primary/20 hover:shadow-primary/40 active:scale-95 w-full md:w-auto"
+                >
+                    <span className="material-symbols-outlined text-[20px]">add_circle</span>
+                    <span>{t('create_new_ticket')}</span>
+                </button>
+            </div>
         </div>
+
+        {edgeResult && (
+            <div className="bg-green-50 border border-green-200 dark:bg-green-500/10 dark:border-green-500/20 rounded-2xl p-4 flex items-center gap-3 animate-in slide-in-from-top-2">
+                <div className="bg-green-500 rounded-full p-2 text-white shrink-0">
+                    <span className="material-symbols-outlined">info</span>
+                </div>
+                <p className="text-sm text-green-900 dark:text-green-200 font-medium">{edgeResult}</p>
+                <button onClick={() => setEdgeResult(null)} className="ml-auto text-slate-400">
+                    <span className="material-symbols-outlined">close</span>
+                </button>
+            </div>
+        )}
 
         {escalationCount > 0 && (
             <div className="bg-red-50 border border-red-200 dark:bg-red-500/10 dark:border-red-500/20 rounded-2xl p-4 flex items-center gap-3 animate-in slide-in-from-top-4 duration-500">
@@ -138,7 +186,7 @@ const Dashboard: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           <div className="flex flex-col justify-between rounded-3xl p-5 bg-white dark:bg-surface-dark shadow-sm border border-slate-100 dark:border-white/5 min-h-[140px] transition-colors">
             <div className="flex justify-between items-start">
-              <div className="p-2 bg-blue-50 dark:bg-blue-500/10 rounded-full"><span className="material-symbols-outlined text-blue-500 dark:text-blue-400" style={{ fontSize: '20px' }}>confirmation_number</span></div>
+              <div className="p-2 bg-green-50 dark:bg-green-500/10 rounded-full"><span className="material-symbols-outlined text-green-500 dark:text-green-400" style={{ fontSize: '20px' }}>confirmation_number</span></div>
               <span className="text-xs font-bold text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-500/10 px-2 py-1 rounded-full">+5%</span>
             </div>
             <div>
@@ -153,12 +201,12 @@ const Dashboard: React.FC = () => {
             </div>
             <div>
               <p className="text-3xl font-bold tracking-tight mb-1 text-white">{stats.open}</p>
-              <p className="text-sm font-bold text-blue-100">{t('open_now')}</p>
+              <p className="text-sm font-bold text-green-100">{t('open_now')}</p>
             </div>
           </div>
           <div className="flex flex-col justify-between rounded-3xl p-5 bg-white dark:bg-surface-dark shadow-sm border border-slate-100 dark:border-white/5 min-h-[140px] transition-colors">
             <div className="flex justify-between items-start">
-              <div className="p-2 bg-blue-50 dark:bg-blue-500/10 rounded-full"><span className="material-symbols-outlined text-blue-500 dark:text-blue-400" style={{ fontSize: '20px' }}>timelapse</span></div>
+              <div className="p-2 bg-green-50 dark:bg-green-500/10 rounded-full"><span className="material-symbols-outlined text-green-500 dark:text-green-400" style={{ fontSize: '20px' }}>timelapse</span></div>
             </div>
             <div>
               <p className="text-3xl font-bold tracking-tight mb-1 text-slate-900 dark:text-white">{stats.inProgress}</p>
@@ -167,7 +215,7 @@ const Dashboard: React.FC = () => {
           </div>
           <div className="flex flex-col justify-between rounded-3xl p-5 bg-white dark:bg-surface-dark shadow-sm border border-slate-100 dark:border-white/5 min-h-[140px] transition-colors">
             <div className="flex justify-between items-start">
-              <div className="p-2 bg-blue-50 dark:bg-blue-500/10 rounded-full"><span className="material-symbols-outlined text-blue-500 dark:text-blue-400" style={{ fontSize: '20px' }}>check_circle</span></div>
+              <div className="p-2 bg-green-50 dark:bg-green-500/10 rounded-full"><span className="material-symbols-outlined text-green-500 dark:text-green-400" style={{ fontSize: '20px' }}>check_circle</span></div>
               <span className="text-xs font-bold text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-500/10 px-2 py-1 rounded-full">+8%</span>
             </div>
             <div>
@@ -189,7 +237,7 @@ const Dashboard: React.FC = () => {
                       <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Tickets by Status</p>
                       <p className="text-2xl font-bold mt-1 text-slate-900 dark:text-white">Live Health</p>
                     </div>
-                    <div className="size-10 rounded-full bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center"><span className="material-symbols-outlined text-blue-500 dark:text-blue-400">bar_chart</span></div>
+                    <div className="size-10 rounded-full bg-green-50 dark:bg-green-500/10 flex items-center justify-center"><span className="material-symbols-outlined text-green-500 dark:text-green-400">bar_chart</span></div>
                   </div>
                   <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-5 items-center">
                     <p className="text-xs font-bold text-slate-500 dark:text-slate-400 w-12">{t('s_open')}</p>
@@ -198,7 +246,7 @@ const Dashboard: React.FC = () => {
                     </div>
                     <p className="text-xs font-bold text-slate-500 dark:text-slate-400 w-12">{t('in_progress')}</p>
                     <div className="h-3 w-full bg-slate-100 dark:bg-slate-700/50 rounded-full overflow-hidden">
-                        <div className="h-full bg-blue-400 rounded-full" style={{ width: `${(stats.inProgress/stats.total)*100 || 0}%` }}></div>
+                        <div className="h-full bg-emerald-400 rounded-full" style={{ width: `${(stats.inProgress/stats.total)*100 || 0}%` }}></div>
                     </div>
                     <p className="text-xs font-bold text-slate-500 dark:text-slate-400 w-12">{t('s_closed')}</p>
                     <div className="h-3 w-full bg-slate-100 dark:bg-slate-700/50 rounded-full overflow-hidden">
@@ -214,7 +262,7 @@ const Dashboard: React.FC = () => {
            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {recentUpdates.map(ticket => (
                   <div key={ticket.id} onClick={() => navigate(`/ticket/${ticket.id}`)} className="flex items-center gap-4 bg-white dark:bg-surface-dark border border-slate-100 dark:border-white/5 p-4 rounded-2xl cursor-pointer hover:bg-slate-50 dark:hover:bg-surface-highlight/50 transition-colors">
-                    <div className="bg-blue-50 dark:bg-blue-500/10 text-blue-500 dark:text-blue-400 rounded-full p-2.5 shrink-0"><span className="material-symbols-outlined text-[20px]">update</span></div>
+                    <div className="bg-green-50 dark:bg-green-500/10 text-green-500 dark:text-green-400 rounded-full p-2.5 shrink-0"><span className="material-symbols-outlined text-[20px]">update</span></div>
                     <div className="flex-1 min-w-0">
                         <p className="font-bold truncate text-slate-900 dark:text-white">{ticket.title}</p>
                         <p className="text-xs text-slate-500 dark:text-slate-400 truncate">Updated by {ticket.creator} • #{ticket.id}</p>

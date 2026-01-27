@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
@@ -75,9 +74,9 @@ const Signup: React.FC = () => {
     <div className="min-h-screen flex bg-slate-50 dark:bg-background-dark font-display transition-colors duration-300">
       <div className="hidden lg:flex lg:w-1/2 relative bg-surface-dark overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center opacity-60 mix-blend-overlay" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2832&auto=format&fit=crop)' }}></div>
-        <div className="absolute inset-0 bg-gradient-to-tr from-blue-900/40 via-background-dark/80 to-background-dark"></div>
+        <div className="absolute inset-0 bg-gradient-to-tr from-green-900/40 via-background-dark/80 to-background-dark"></div>
         <div className="relative z-10 flex flex-col justify-end p-16 h-full w-full">
-             <div className="size-16 rounded-2xl bg-primary flex items-center justify-center shadow-[0_0_40px_-10px_rgba(59,130,246,0.5)] mb-8">
+             <div className="size-16 rounded-2xl bg-primary flex items-center justify-center shadow-[0_0_40px_-10px_rgba(34,197,94,0.5)] mb-8">
                  <span className="material-symbols-outlined text-white text-[32px]">group_add</span>
             </div>
             <h1 className="text-5xl font-bold text-white mb-6 leading-tight max-w-lg">Join the team.</h1>

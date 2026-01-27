@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -95,7 +94,7 @@ const TopNav: React.FC = () => {
                     <span className="text-sm font-bold text-slate-900 dark:text-white leading-none">{displayName}</span>
                     <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">{displayEmail}</span>
                 </div>
-                <div className="size-8 rounded-full bg-gradient-to-tr from-primary to-blue-400 p-[2px]">
+                <div className="size-8 rounded-full bg-gradient-to-tr from-primary to-emerald-400 p-[2px]">
                     <img src={displayAvatar} alt="Profile" className="rounded-full size-full object-cover border-2 border-white dark:border-background-dark"/>
                 </div>
             </button>
