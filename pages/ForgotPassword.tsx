@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { getEmailConfig, sendEmail, getAppTemplate, fillTemplate } from '../utils/email';
@@ -17,46 +16,31 @@ const ForgotPassword: React.FC = () => {
     
     const config = getEmailConfig();
     const cleanEmail = email.trim();
-    
-    // Generate Expiry Timestamp (1 Hour from now)
     const expiry = Date.now() + 3600000; 
-    
-    // Construct Link - Robust Logic for Preview Environments
     let baseUrl = window.location.href.split('#')[0];
 
-    // FIX: Remove 'blob:' prefix if present. 
-    // Preview environments often serve apps via blob:https://... which breaks email links.
     if (baseUrl.startsWith('blob:')) {
         baseUrl = baseUrl.replace('blob:', '');
     }
     
-    // Remove trailing slash to standardize
     if (baseUrl.endsWith('/')) {
         baseUrl = baseUrl.slice(0, -1);
     }
 
-    // Note: We use the exact base URL of the current page (minus hash) 
-    // to ensure the link works in whatever environment (localhost, s3, preview container)
-    // the app is currently running in.
     const resetLink = `${baseUrl}/#/reset-password?email=${encodeURIComponent(cleanEmail)}&exp=${expiry}`;
     setGeneratedLink(resetLink);
 
     if (config && config.resetTemplateId) {
-        // 1. Get the local template definition
         const appTemplate = getAppTemplate('reset_password');
-        
-        // 2. Define variables
         const variables = {
             to_email: cleanEmail,
             to_name: cleanEmail.split('@')[0],
             link: resetLink
         };
 
-        // 3. Construct final content
         const finalSubject = appTemplate ? fillTemplate(appTemplate.subject, variables) : 'Reset Password';
         const finalMessage = appTemplate ? fillTemplate(appTemplate.body, variables) : `Please reset your password here: ${resetLink}`;
 
-        // 4. Send
         const sent = await sendEmail(config.resetTemplateId, {
             ...variables,
             subject: finalSubject,
@@ -64,7 +48,6 @@ const ForgotPassword: React.FC = () => {
         });
         setEmailSentStatus(sent ? 'sent' : 'failed');
     } else {
-        // Simulate API delay
         await new Promise(r => setTimeout(r, 1500));
         setEmailSentStatus('simulated');
     }
@@ -80,16 +63,15 @@ const ForgotPassword: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background-dark font-display p-6 relative overflow-hidden">
-        {/* Background Elements */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
              <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/20 rounded-full blur-[100px]"></div>
-             <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[100px]"></div>
+             <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-600/10 rounded-full blur-[100px]"></div>
         </div>
 
         <div className="w-full max-w-md bg-surface-dark border border-white/10 rounded-3xl p-8 shadow-2xl relative z-10 animate-in fade-in zoom-in-95 duration-500">
              {isSuccess ? (
                  <div className="text-center space-y-6">
-                    <div className="size-20 bg-blue-500/10 text-blue-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-500/20">
+                    <div className="size-20 bg-green-500/10 text-green-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-500/20">
                         <span className="material-symbols-outlined text-4xl">mark_email_read</span>
                     </div>
                     <div>
@@ -106,10 +88,8 @@ const ForgotPassword: React.FC = () => {
                         </p>
                     )}
 
-                    {/* Developer / Fallback Link Section */}
                     <div className="p-5 bg-background-dark/50 border border-white/5 rounded-2xl mt-4 space-y-3">
                         <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">Debug & Fallback</p>
-                        
                         <button 
                             onClick={copyToClipboard}
                             className="flex items-center justify-center gap-2 w-full bg-white/5 hover:bg-white/10 text-white font-medium py-3 rounded-xl transition-colors border border-white/10 text-sm"
@@ -117,14 +97,12 @@ const ForgotPassword: React.FC = () => {
                             <span className="material-symbols-outlined text-[18px]">content_copy</span>
                             Copy Reset Link
                         </button>
-
                         <Link 
                             to={`/reset-password?email=${encodeURIComponent(email)}&exp=${Date.now() + 3600000}`}
                             className="block w-full bg-surface-highlight hover:bg-white/10 text-white font-bold py-3.5 rounded-xl transition-colors text-sm border border-white/10"
                         >
                             Open Link Directly
                         </Link>
-                        <p className="text-[10px] text-slate-500">Link valid for 1 hour</p>
                     </div>
 
                     <div className="pt-4">

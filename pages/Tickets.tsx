@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -86,7 +85,7 @@ const Tickets: React.FC = () => {
             filteredTickets.map((ticket) => (
                 <div key={ticket.id} onClick={() => navigate(`/ticket/${ticket.id}`)} className="group relative flex flex-col bg-white dark:bg-surface-dark border border-slate-200 dark:border-white/5 p-5 rounded-3xl cursor-pointer shadow-sm">
                     <div className="flex justify-between items-start mb-2">
-                        <span className="font-bold text-xs text-primary bg-blue-50 dark:bg-blue-500/10 px-2 py-1 rounded-md">#{ticket.id}</span>
+                        <span className="font-bold text-xs text-primary bg-green-50 dark:bg-green-500/10 px-2 py-1 rounded-md">#{ticket.id}</span>
                         <span className="text-xs text-slate-400">{new Date(Number(ticket.timestamp)).toLocaleDateString()}</span>
                     </div>
                     <h3 className="font-bold text-lg leading-tight mb-4 group-hover:text-primary transition-colors">{ticket.title}</h3>

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -11,11 +10,11 @@ const VerifyEmail: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-background-dark font-display p-6 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
              <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/20 rounded-full blur-[100px]"></div>
-             <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[100px]"></div>
+             <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-600/10 rounded-full blur-[100px]"></div>
         </div>
 
        <div className="w-full max-w-md bg-surface-dark border border-white/10 rounded-3xl p-8 shadow-2xl relative z-10 animate-in zoom-in-95 duration-300 flex flex-col items-center text-center">
-            <div className="size-16 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mb-6 border border-blue-500/20">
+            <div className="size-16 rounded-full bg-green-500/10 text-green-400 flex items-center justify-center mb-6 border border-green-500/20">
                 <span className="material-symbols-outlined text-3xl">mark_email_read</span>
             </div>
             <h2 className="text-2xl font-bold text-white mb-2">Check your email</h2>

@@ -1,20 +1,20 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# OmniTicket AI
 
-# Run and deploy your AI Studio app
+Intelligent support ticketing system with Gemini AI integration.
 
-This contains everything you need to run your app locally.
+## Render Deployment (Static Site)
 
-View your app in AI Studio: https://ai.studio/apps/drive/1BzV4xFCuv0bbXmrbkoGZ0aVLpxMqugnb
+1. **New Static Site**: Connect your repository to Render.
+2. **Build Command**: `npm install && npm run build`
+3. **Publish Directory**: `dist`
+4. **Environment Variables**:
+   - `API_KEY`: Your Google Gemini API Key.
+   - `SUPABASE_URL`: Your Supabase Project URL.
+   - `SUPABASE_ANON_KEY`: Your Supabase Anonymous Key.
 
-## Run Locally
-
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Features
+- Real-time AI Assistant (Omnibot)
+- Voice & Chat modes
+- Automated Ticket Management via Supabase
+- Multilingual Support (English/Arabic)
+- Mobile-First Design

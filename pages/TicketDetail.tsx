@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useVoice } from '../context/VoiceContext';
@@ -78,7 +77,6 @@ const TicketDetail: React.FC = () => {
       
       if (!error && data) {
           setCurrentTicket(data);
-          // Load activities
           const savedActivities = localStorage.getItem(`omni_activities_${id}`);
           if (savedActivities) {
               setActivities(JSON.parse(savedActivities));
@@ -99,7 +97,6 @@ const TicketDetail: React.FC = () => {
   const updateTicketData = async (updatedFields: any) => {
       if (!currentTicket) return;
 
-      // Note: If updating status, we must update the tags array
       let finalPayload = { ...updatedFields };
       
       if (updatedFields.status) {
@@ -108,10 +105,9 @@ const TicketDetail: React.FC = () => {
               'Pending': { bg: 'bg-orange-900/30', color: 'text-orange-300', icon: 'hourglass_empty' },
               'Resolved': { bg: 'bg-slate-800', color: 'text-slate-400', icon: 'check_circle' },
               'Closed': { bg: 'bg-slate-800', color: 'text-slate-400', icon: 'check_circle' },
-              'In Progress': { bg: 'bg-blue-900/30', color: 'text-blue-300', icon: 'timelapse' }
+              'In Progress': { bg: 'bg-emerald-900/30', color: 'text-emerald-300', icon: 'timelapse' }
           };
 
-          // Keep current non-status tags (like Priority and Type)
           const otherTags = currentTicket.tags?.filter((t: any) => 
             !['Open', 'Pending', 'Resolved', 'Closed', 'In Progress'].includes(t.label)
           ) || [];
@@ -120,7 +116,6 @@ const TicketDetail: React.FC = () => {
               { label: updatedFields.status, ...statusConfig[updatedFields.status] },
               ...otherTags
           ];
-          // Remove status key as it doesn't exist in the table schema
           delete finalPayload.status;
       }
 
@@ -209,7 +204,6 @@ const TicketDetail: React.FC = () => {
           <p className="text-base text-slate-600 dark:text-slate-300 leading-relaxed mb-8">{currentTicket.description}</p>
         </div>
 
-        {/* Properties */}
         <div className="px-5 mb-8 grid grid-cols-2 gap-3">
              <div className="p-3.5 bg-white dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-white/5">
                  <span className="text-[10px] font-bold text-slate-500 uppercase">Status</span>
@@ -221,7 +215,6 @@ const TicketDetail: React.FC = () => {
              </div>
         </div>
 
-        {/* Activity Feed */}
         <div className="px-5 space-y-6">
             {activities.map(act => (
                 <div key={act.id} className="flex gap-4">

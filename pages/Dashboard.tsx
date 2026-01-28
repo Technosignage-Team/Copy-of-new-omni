@@ -51,7 +51,6 @@ const Dashboard: React.FC = () => {
       setEdgeLoading(true);
       setEdgeResult(null);
       try {
-          // 'hello-omni' is the name of your deployed Edge Function
           const { data, error } = await supabase.functions.invoke('hello-omni', {
               body: { name: 'Omni Agent' }
           });
